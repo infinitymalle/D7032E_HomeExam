@@ -1,12 +1,14 @@
 package game;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
     public static void main(String[] args){
         System.out.println("Starting!");
         int choice = 0;
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader keyboardInput = new BufferedReader(new InputStreamReader(System.in));
         do{
             System.out.println("Welcome to Apples to Apples!\n");
             System.out.println("What do you want to do?\n");
@@ -15,48 +17,51 @@ public class Main {
             System.out.println("3. Quit");
 
             try {
-                String input = scanner.nextLine();
+                String input = keyboardInput.readLine();
                 choice = Integer.parseInt(input);
-
-            } catch (Exception e) {
-                // TODO: handle exception
+            } catch (NumberFormatException e) {
+                choice = 0;
+            } catch (IOException e) {
+                System.out.println("Input error: " + e.getMessage());
+                choice = 0;
             }
 
             switch (choice) {
                 case 1:
-                    hostGame(scanner);
+                    hostGame(keyboardInput);
                     break;
                 case 2:
-                    joinGame(scanner);
+                    joinGame(keyboardInput);
                     break;
                 case 3:
-                    scanner.close();
                     quit();
                     break;
                 case 0:
-                System.out.println("Please choose a valid option!");
+                    System.out.println("Please choose a valid option!");
                     break;
             }
         } while(true);
     }
 
-    private static void hostGame(Scanner scanner){
-
-        System.out.println("How many online players?\n\nNumber of online players:");
-        String input = scanner.nextLine();
-        int numberOfOnlinePlayers = Integer.parseInt(input);
-
-        scanner.close();
-        new HostGame(numberOfOnlinePlayers);
+    private static void hostGame(BufferedReader keyboardInput){
+        System.out.println("How many online players?\n");
+        try {
+            String input = keyboardInput.readLine();
+            int numberOfOnlinePlayers = Integer.parseInt(input);
+            new HostGame(numberOfOnlinePlayers);
+        } catch (IOException e) {
+            System.out.println("Input error: " + e.getMessage());
+        }
     }
 
-    private static void joinGame(Scanner scanner){
+    private static void joinGame(BufferedReader keyboardInput){
         System.out.println("What is the ip adress?");
-        String ipAddress = scanner.nextLine();
-
-        scanner.close();
-        new JoinGame(ipAddress);
-        
+        try {
+            String ipAddress = keyboardInput.readLine();
+            new JoinGame(ipAddress);
+        } catch (IOException e) {
+            System.out.println("Input error: " + e.getMessage());
+        }
     }
 
     private static void quit(){

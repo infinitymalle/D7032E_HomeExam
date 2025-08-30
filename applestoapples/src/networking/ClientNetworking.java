@@ -1,4 +1,4 @@
-package networkingpackage;
+package networking;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -7,14 +7,14 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 
-public class NetworkManager {
+public class ClientNetworking {
 
     private Socket socket;
     private BufferedReader in;
     private DataOutputStream out;
 
     // When this instance is a online player connectiong to the server
-    public NetworkManager(String ipAddress) {
+    public ClientNetworking(String ipAddress) {
         try {
             this.socket = new Socket(ipAddress, 2048);
             this.socket.setSoTimeout(60_000);

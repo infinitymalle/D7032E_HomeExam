@@ -1,4 +1,4 @@
-package playerpackage;
+package player;
 
 import java.util.ArrayList;
 
@@ -63,6 +63,7 @@ public abstract class Player {
     
     public void setPlayedCard(Card card){
         playedCard = card;
+        this.hand.remove(card);
     }
 
     public Card getPlayedCard(){

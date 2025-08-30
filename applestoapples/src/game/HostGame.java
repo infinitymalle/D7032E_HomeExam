@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-import networking.ServerNetworkManager;
+import networking.ServerNetworking;
 import player.*;
 
 public class HostGame {
@@ -17,11 +17,13 @@ public class HostGame {
     private String redApplesFile = "redApples.txt";
     private Deck greenApples = new Deck(greenApplesFile);
     private Deck redApples = new Deck(redApplesFile);
+    private Card currentGreenApple;
+    private Card winningApple;
 
     private int currentPhaseIndex = 0;
     private int judge;
 
-    private ServerNetworkManager serverNetworkManager;
+    private ServerNetworking serverNetworkManager;
     private ArrayList<Player> players = new ArrayList<Player>();
     private ArrayList<Card> playedApples = new ArrayList<Card>();
     private int pointsToWin;
@@ -29,18 +31,18 @@ public class HostGame {
     
 
     public HostGame(int numberOfOnlinePlayers){
-        this.serverNetworkManager = new ServerNetworkManager(numberOfOnlinePlayers);
+        this.serverNetworkManager = new ServerNetworking(numberOfOnlinePlayers);
 
         players.add(new LocalPlayer(0));
         if(numberOfOnlinePlayers > 0){
-            for(int i = 1; i <= numberOfOnlinePlayers+1; i++){
+            for(int i = 1; i <= numberOfOnlinePlayers; i++){
                 players.add(new OnlinePlayer(i));
                 serverNetworkManager.sendMessage(i, String.valueOf(i));
                 System.out.println("Player with id: " + i + " joined the game!");
             }
         }
         
-        if(numberOfOnlinePlayers+1 < 4){
+        if(players.size() < 4){
             for(int i = players.size()+1 ;i<=4 ; i++){
                 players.add(new BotPlayer(i));
                 System.out.println("Bot with id: " + i + " joined the game!");
@@ -52,6 +54,8 @@ public class HostGame {
         }else if(this.players.size() >= 8){
             this.pointsToWin = 4;
         }
+
+        judge = java.util.concurrent.ThreadLocalRandom.current().nextInt(players.size());
 
         startGame();
     }
@@ -80,6 +84,7 @@ public class HostGame {
                 if(WinCheck()){
                     return false;
                 }
+                judge = (judge + 1) % players.size(); // New judge
                 break;
         }
 
@@ -91,12 +96,10 @@ public class HostGame {
     private void DrawPhase() {
 
         for(int i=0; i < players.size(); i++) {
-            int numberOfCards = players.get(i).numberOfCards();
-            
-            //TODO servernetworkmanager
+            int toDraw = 7 - players.get(i).numberOfCards();
             
             ArrayList<Card> onlinePlayerCards = new ArrayList<>();
-            for(int j = 0; j <= numberOfCards; j++){
+            for(int j = 0; j < toDraw; j++){
                 Card appleDrawn = redApples.drawCard();
                 players.get(i).drawCard(appleDrawn);
 
@@ -109,14 +112,15 @@ public class HostGame {
                 for(int j = 0;j< onlinePlayerCards.size() ;j++){
                     applesDrawn += onlinePlayerCards.get(j) + "#";
                 }
-                serverNetworkManager.sendMessage(i, applesDrawn);
+                serverNetworkManager.sendMessage(i, "DRAW_PHASE#" + applesDrawn);
             }
         }
     }
 
     private void PlayPhase() {
-        Card greendApple = greenApples.drawCard();
-        greenApples.playedCard(greendApple);
+
+        currentGreenApple = greenApples.drawCard();
+        greenApples.playedCard(currentGreenApple);
         
         ExecutorService threadpool = Executors.newFixedThreadPool(players.size()-1);
         CountDownLatch latch = new CountDownLatch(players.size()-1);  // excluding the judge
@@ -132,13 +136,12 @@ public class HostGame {
                         try{
                             Card playedCard = null;
                             if (currentPlayer.isOnline()) {
-                                serverNetworkManager.sendMessage(currentPlayer.getId(), "PLAY_PHASE#" + greendApple.toString());
+                                serverNetworkManager.sendMessage(currentPlayer.getId(), "PLAY_PHASE#" + currentGreenApple.toString());
                                 String cardString = serverNetworkManager.receiveMessage(currentPlayer.getId());
-                                playedCard = greenApples.creatCard(cardString);
-                                
-                            }else{
-                                playedCard = currentPlayer.playCard(greendApple);
+                                playedCard = redApples.creatCard(cardString);
                                 currentPlayer.setPlayedCard(playedCard);
+                            }else{
+                                playedCard = currentPlayer.playCard(currentGreenApple);
                             }
                             
                             synchronized (playedApples) {
@@ -155,20 +158,14 @@ public class HostGame {
         }
         threadpool.shutdown();
         try {
-            // Wait for all players to finish or timeout after 60 seconds
             if (!latch.await(60, TimeUnit.SECONDS)) {
                 System.out.println("Not all players responded in time.");
-                // Optionally cancel all running tasks if they are not responsive
                 threadpool.shutdownNow();
-                // Handle the situation where not all players have responded
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.out.println("Interrupted while waiting for players to play cards");
-        }
-        
-        
-        
+        }  
     }
 
     private void JudgePhase() {
@@ -179,25 +176,24 @@ public class HostGame {
 			int index = rnd.nextInt(i+1);
 			Card a = playedApples.get(index); 
             playedApples.set(index, playedApples.get(i)); 
-            playedApples.set(i, a); // SWAP
+            playedApples.set(i, a);
 		}
 
         String playedRedApplesString = playedRedApplesToString();
-        Card winningApple = null;
         if(players.get(judge).isOnline()){
             serverNetworkManager.sendMessage(judge, "JUDGE_PHASE#" + playedRedApplesString);
             String appleString = serverNetworkManager.receiveMessage(judge);
             winningApple = redApples.creatCard(appleString);
             
-        }else if(!players.get(judge).isOnline()){
+        }else{
             winningApple = players.get(judge).judge(playedApples);
         }
         
         int winningPlayer = 0;
         // Who won
         for(int i=0; i < players.size(); i++){
-            if(players.get(i).getPlayedCard() == winningApple){
-                players.get(i).scorePoint(winningApple);
+            if(players.get(i).getPlayedCard().equals(winningApple)){
+                players.get(i).scorePoint(currentGreenApple);
                 winningPlayer = i;
             }
         }
@@ -225,7 +221,7 @@ public class HostGame {
 
     private boolean WinCheck() {
         for(int i=0; i < players.size(); i++){
-            if(players.get(i).getPoints() == pointsToWin){
+            if(players.get(i).getPoints() >= pointsToWin){
                 victoriousPlayer = i;
                 return true;
             }
@@ -236,7 +232,7 @@ public class HostGame {
     private void notifyGameFinished(int winningPlayer) {
         for(int i = 0; i < players.size(); i++){
             if(players.get(i).isOnline()){
-                serverNetworkManager.sendMessage(i, "FINISHED#" + winningPlayer); // TODO what palyer won?
+                serverNetworkManager.sendMessage(i, "WINNER#" + winningPlayer + "#" + winningApple.toString());
             }else if(!players.get(i).isBot()){
                 players.get(i).gamefinished(winningPlayer);
             }

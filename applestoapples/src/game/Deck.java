@@ -25,24 +25,23 @@ public class Deck {
         for (int i = deck.size() - 1; i > 0; i--) {
             int index = rnd.nextInt(i + 1);
             Card temp = deck.get(index);
-            deck.set(index, deck.get(i));
-            deck.set(i, temp);
+            this.deck.set(index, deck.get(i));
+            this.deck.set(i, temp);
         }
     }
 
 
     public Card drawCard() {
-        if (deck.isEmpty()) {
-            deck = discardPile;
-            discardPile.clear();
-            shuffleDeck();
+        if (this.deck.isEmpty()) {
+            this.deck.addAll(discardPile);
+            this.discardPile.clear();
+            this.shuffleDeck();
         }
-        Card card = deck.remove(0);
-        return card;
+        return deck.remove(0);
     }
 
     public void playedCard(Card card){
-        discardPile.add(card);
+        this.discardPile.add(card);
     }
 
     public Card creatCard(String cardString){
@@ -64,7 +63,7 @@ public class Deck {
         try {
             List<String> lines = Files.readAllLines(Paths.get("bin" ,"apples" , fileName), StandardCharsets.ISO_8859_1);
             for (String line : lines) {
-                deck.add(new Card(line));
+                this.deck.add(new Card(line));
             }
         } catch (Exception e) {
             e.printStackTrace();

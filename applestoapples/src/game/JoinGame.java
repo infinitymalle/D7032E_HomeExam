@@ -1,22 +1,20 @@
 package game;
 
-import networking.NetworkManager;
+import networking.ClientNetworking;
 import player.LocalPlayer;
 
 public class JoinGame {
     private LocalPlayer localPlayer;
-    private NetworkManager networkManager;
-    private Deck mockDeck;
+    private ClientNetworking networkManager;
+    private Deck mockDeck = new Deck(null);
 
     public JoinGame(String ipAddress){
 
-        this.networkManager = new NetworkManager(ipAddress);
+        this.networkManager = new ClientNetworking(ipAddress);
         String message = networkManager.receiveMessage();
         int playerID = Integer.parseInt(message);
         this.localPlayer = new LocalPlayer(playerID);
         
-
-
         startGame();
     }
 
@@ -32,7 +30,7 @@ public class JoinGame {
         
         switch (serverMessage[0]) {
             case "DRAW_PHASE":
-                DrawPhase();
+                DrawPhase(serverMessage[1]);
                 break;
             case "PLAY_PHASE":
                 PlayPhase(serverMessage[1]);
@@ -41,22 +39,21 @@ public class JoinGame {
                 JudgePhase(serverMessage[1]);
                 break;
             case "FINISHED":
-                
-                break;
+                if(localPlayer.getId() == Integer.parseInt(serverMessage[1])){
+                    System.out.println("You won the game!");
+                }
+                System.out.println("Player " + serverMessage[1] + "has won the game!");
+                return false;
+
             default:
                 System.out.print("Something went wrong!");
                 break;
-        
-        
         }
         return true;
     }
 
-    private void DrawPhase() {
-        String numberOfCards = Integer.toString(localPlayer.numberOfCards());
-        networkManager.sendMessage(numberOfCards);
-        String message = networkManager.receiveMessage();
-        String[] cards = message.split("#");
+    private void DrawPhase(String cardsDrawn) {
+        String[] cards = cardsDrawn.split("#");
 
         for(int i = 0; i < cards.length; i++){
             Card card = mockDeck.creatCard(cards[i]);
@@ -65,10 +62,10 @@ public class JoinGame {
     }
 
     private void PlayPhase(String playedAppleString) {
-        Card playedGreenApple = mockDeck.creatCard(playedAppleString);
-        Card playedRedApple = localPlayer.playCard(playedGreenApple);
+        Card GreenApple = mockDeck.creatCard(playedAppleString);
+        Card RedApple = localPlayer.playCard(GreenApple);
 
-        networkManager.sendMessage(playedRedApple.toString());
+        networkManager.sendMessage(RedApple.toString());
         
     }
 

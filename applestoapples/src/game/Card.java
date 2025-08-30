@@ -1,7 +1,7 @@
 package game;
 
 public class Card {
-    private String cardString; 
+    private final String cardString; 
 
     public Card(String cardString){
         this.cardString = cardString;

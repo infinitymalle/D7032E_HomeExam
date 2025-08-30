@@ -1,4 +1,4 @@
-package playerpackage;
+package player;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -38,7 +38,7 @@ public class LocalPlayer extends Player {
             try {
                 int choice = Integer.parseInt(keyboardInput.readLine());
                 if (choice >= 1 && choice <= hand.size()) {
-                    return hand.remove(choice - 1);  // remove from hand!
+                    return hand.get(choice - 1); 
                 }
             } catch (Exception ignored) {}
             System.out.println("You have to choose a valid option!");

@@ -1,16 +1,16 @@
-package networkingpackage;
+package networking;
 
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ServerNetworkManager {
+public class ServerNetworking {
     private Socket socket;
     private ServerSocket serverSocket;
     private ArrayList<ClientHandler> players;
 
      // Server networksetup
-    public ServerNetworkManager(int numberOfOnlinePlayers){
+    public ServerNetworking(int numberOfOnlinePlayers){
         try {
             serverSocket = new ServerSocket(2048);
             for(int i = 0; i<numberOfOnlinePlayers; i++){
