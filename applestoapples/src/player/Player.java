@@ -27,14 +27,14 @@ public abstract class Player {
 
     public String printHand(){
         String returnString = "";
-        for(int i = 1; i<hand.size(); i++){
+        for(int i = 0; i<hand.size(); i++){
             returnString += "#\t["+i+"] " + hand.get(i).getString() + "\n\n";
         }
         return returnString;
     }
 
-    public String newroundString(String judgeString){
-        if(judgeString == "JUDGE"){
+    public String newroundString(boolean judge){
+        if(judge){
             return "*****************************************************\n\n**                 NEW ROUND - JUDGE               **\n\n*****************************************************";
 
         }
@@ -62,12 +62,16 @@ public abstract class Player {
     }
     
     public void setPlayedCard(Card card){
-        playedCard = card;
+        this.playedCard = card;
         this.hand.remove(card);
     }
 
     public Card getPlayedCard(){
         return playedCard;
+    }
+
+    public void clearPlayedCard(){
+        this.playedCard = null;
     }
 
     public boolean isBot(){

@@ -38,6 +38,9 @@ public class JoinGame {
             case "JUDGE_PHASE":
                 JudgePhase(serverMessage[1]);
                 break;
+            case "WINNER":
+                System.out.println(serverMessage[1]);;
+                break;
             case "FINISHED":
                 if(localPlayer.getId() == Integer.parseInt(serverMessage[1])){
                     System.out.println("You won the game!");

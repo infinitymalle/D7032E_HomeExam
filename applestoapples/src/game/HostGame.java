@@ -35,7 +35,7 @@ public class HostGame {
 
         players.add(new LocalPlayer(0));
         if(numberOfOnlinePlayers > 0){
-            for(int i = 1; i <= numberOfOnlinePlayers; i++){
+            for(int i = 1; i < numberOfOnlinePlayers; i++){
                 players.add(new OnlinePlayer(i));
                 serverNetworkManager.sendMessage(i, String.valueOf(i));
                 System.out.println("Player with id: " + i + " joined the game!");
@@ -181,8 +181,8 @@ public class HostGame {
 
         String playedRedApplesString = playedRedApplesToString();
         if(players.get(judge).isOnline()){
-            serverNetworkManager.sendMessage(judge, "JUDGE_PHASE#" + playedRedApplesString);
-            String appleString = serverNetworkManager.receiveMessage(judge);
+            serverNetworkManager.sendMessage(players.get(judge).getId(), "JUDGE_PHASE#" + playedRedApplesString);
+            String appleString = serverNetworkManager.receiveMessage(players.get(judge).getId());
             winningApple = redApples.creatCard(appleString);
             
         }else{
@@ -192,7 +192,7 @@ public class HostGame {
         int winningPlayer = 0;
         // Who won
         for(int i=0; i < players.size(); i++){
-            if(players.get(i).getPlayedCard().equals(winningApple)){
+            if(players.get(i).getPlayedCard().toString().equals(winningApple.toString())){
                 players.get(i).scorePoint(currentGreenApple);
                 winningPlayer = i;
             }
@@ -202,13 +202,15 @@ public class HostGame {
         for(int i=0; i < players.size(); i++){
             if(!players.get(i).isBot())
                 if(players.get(i).isOnline()){
-                    serverNetworkManager.sendMessage(i, winningApple.toString());
+                    serverNetworkManager.sendMessage(i, "WINNER#" + "Player " + winningPlayer + " won the round with apple: " + winningApple.toString());
                 }else{
                     players.get(i).notifyWhoWon(winningPlayer, winningApple);
                 }
         }
-
         playedApples.clear();
+        for(int i = 0; i < players.size(); i ++){
+            players.get(i).clearPlayedCard();
+        }
     }
 
     private String playedRedApplesToString() {
@@ -232,7 +234,7 @@ public class HostGame {
     private void notifyGameFinished(int winningPlayer) {
         for(int i = 0; i < players.size(); i++){
             if(players.get(i).isOnline()){
-                serverNetworkManager.sendMessage(i, "WINNER#" + winningPlayer + "#" + winningApple.toString());
+                serverNetworkManager.sendMessage(i, "FINISHED#" + winningPlayer + "#" + winningApple.toString());
             }else if(!players.get(i).isBot()){
                 players.get(i).gamefinished(winningPlayer);
             }

@@ -26,7 +26,8 @@ public class BotPlayer extends Player {
         int n = hand.size();
         if (n == 0) return null;
         int i = ThreadLocalRandom.current().nextInt(n);
-        return hand.remove(i);
+        this.setPlayedCard(this.hand.get(i));
+        return this.getPlayedCard();
     }
 
     @Override 

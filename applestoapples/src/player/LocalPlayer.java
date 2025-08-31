@@ -15,6 +15,7 @@ public class LocalPlayer extends Player {
     }
 
     public Card judge(ArrayList<Card> playedApples) {
+
         while (true) {
             System.out.println("Choose which red apple wins:\n");
             System.out.println(playedApplesToString(playedApples));
@@ -23,7 +24,7 @@ public class LocalPlayer extends Player {
                 if (choice >= 1 && choice <= playedApples.size()) {
                     return playedApples.get(choice - 1);
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {} // TODO this is silent
             System.out.println("You have to choose a valid option!");
         }
     }
@@ -38,9 +39,10 @@ public class LocalPlayer extends Player {
             try {
                 int choice = Integer.parseInt(keyboardInput.readLine());
                 if (choice >= 1 && choice <= hand.size()) {
-                    return hand.get(choice - 1); 
+                    this.setPlayedCard(hand.get(choice - 1));
+                    return this.playedCard; 
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {} // TODO this is silent
             System.out.println("You have to choose a valid option!");
         }
     }

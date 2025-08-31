@@ -18,7 +18,7 @@ public class ClientHandler {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out = new DataOutputStream(socket.getOutputStream());
         } catch (Exception e) {
-            System.out.println("ClientHandler failed to setup client connections. Error " + e + "\nError message: " + e.getMessage());
+            throw new RuntimeException("ClientHandler init failed for id=" + id, e);
         }
         
     }

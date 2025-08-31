@@ -21,7 +21,7 @@ public class ClientNetworking {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out = new DataOutputStream(socket.getOutputStream());
         } catch (Exception e) {
-            System.out.println("Failed to setup client connection. Error " + e + "\nError message: " + e.getMessage());
+            throw new RuntimeException("ClientNetworking init failed for ", e);
         }
     }
 

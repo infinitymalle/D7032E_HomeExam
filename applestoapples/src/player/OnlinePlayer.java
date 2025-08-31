@@ -28,7 +28,6 @@ public class OnlinePlayer extends Player {
 
     @Override
     public void gamefinished(int winningPlayer) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'gamefinished'");
     }
 }
