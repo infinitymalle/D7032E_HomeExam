@@ -30,7 +30,6 @@ public class ServerNetworking {
         return h.receiveMessage();
     }
     
-
     public void sendMessage(int id, String message) {
         ClientHandler h = getHandler(id);
         if (h == null) {
@@ -40,10 +39,6 @@ public class ServerNetworking {
     }
 
     private ClientHandler getHandler(int id) {
-        if (players == null || id < 0 || id >= players.size()) {
-            System.out.println("Player with ID " + id + " not found.");
-            return null;
-        }
-        return players.get(id);
+        return players.get(id - 1);
     }
 }

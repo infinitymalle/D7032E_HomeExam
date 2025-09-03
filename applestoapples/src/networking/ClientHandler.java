@@ -17,6 +17,7 @@ public class ClientHandler {
         try {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out = new DataOutputStream(socket.getOutputStream());
+            System.out.print("Connected!");
         } catch (Exception e) {
             throw new RuntimeException("ClientHandler init failed for id=" + id, e);
         }

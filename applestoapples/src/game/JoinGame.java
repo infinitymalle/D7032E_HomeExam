@@ -6,13 +6,14 @@ import player.LocalPlayer;
 public class JoinGame {
     private LocalPlayer localPlayer;
     private ClientNetworking networkManager;
-    private Deck mockDeck = new Deck(null);
+    private Deck mockDeck = new Deck();
 
     public JoinGame(String ipAddress){
 
         this.networkManager = new ClientNetworking(ipAddress);
         String message = networkManager.receiveMessage();
         int playerID = Integer.parseInt(message);
+        System.out.println("Your are player: " + playerID);
         this.localPlayer = new LocalPlayer(playerID);
         
         startGame();
@@ -27,25 +28,26 @@ public class JoinGame {
     private Boolean nextPhase() {
         String message = networkManager.receiveMessage();
         String[] serverMessage = message.split("#", 2);
-        
+        String payload = (serverMessage.length > 1) ? serverMessage[1] : "";
         switch (serverMessage[0]) {
             case "DRAW_PHASE":
-                DrawPhase(serverMessage[1]);
+                DrawPhase(payload);
                 break;
             case "PLAY_PHASE":
-                PlayPhase(serverMessage[1]);
+                PlayPhase(payload);
                 break;
             case "JUDGE_PHASE":
-                JudgePhase(serverMessage[1]);
+                System.out.println("Time to judge!");
+                JudgePhase(payload);
                 break;
             case "WINNER":
-                System.out.println(serverMessage[1]);;
+                System.out.println(payload);;
                 break;
             case "FINISHED":
-                if(localPlayer.getId() == Integer.parseInt(serverMessage[1])){
+                if(localPlayer.getId() == Integer.parseInt(payload)){
                     System.out.println("You won the game!");
                 }
-                System.out.println("Player " + serverMessage[1] + "has won the game!");
+                System.out.println("Player " + payload + "has won the game!");
                 return false;
 
             default:
@@ -59,6 +61,7 @@ public class JoinGame {
         String[] cards = cardsDrawn.split("#");
 
         for(int i = 0; i < cards.length; i++){
+            if (cards[i].isEmpty()) continue;
             Card card = mockDeck.creatCard(cards[i]);
             localPlayer.drawCard(card);
         }
@@ -68,16 +71,13 @@ public class JoinGame {
         Card GreenApple = mockDeck.creatCard(playedAppleString);
         Card RedApple = localPlayer.playCard(GreenApple);
 
-        networkManager.sendMessage(RedApple.toString());
+        networkManager.sendMessage(RedApple.getString());
         
     }
 
     private void JudgePhase(String playedApplesString) {
         Card winningCard = localPlayer.judge(mockDeck.stringToCard(playedApplesString));
 
-        networkManager.sendMessage(winningCard.toString());
-        String winner = networkManager.receiveMessage();
-        String[] idAndCard = winner.split("#");
-        localPlayer.notifyWhoWon(Integer.valueOf(idAndCard[0]), mockDeck.creatCard(idAndCard[1]));
+        networkManager.sendMessage(winningCard.getString());
     }
 }

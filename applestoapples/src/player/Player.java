@@ -63,7 +63,13 @@ public abstract class Player {
     
     public void setPlayedCard(Card card){
         this.playedCard = card;
-        this.hand.remove(card);
+        String target = card.getString().trim();
+        for(int i = 0; i < this.numberOfCards(); i++){
+            if(target.equals(this.hand.get(i).getString().trim())){
+                this.hand.remove(i);
+                break;
+            }
+        }
     }
 
     public Card getPlayedCard(){

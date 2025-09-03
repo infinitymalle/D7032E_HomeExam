@@ -15,9 +15,19 @@ public class Deck {
     public Deck(String filepath) {
         this.deck = new ArrayList<Card>();
         this.discardPile = new ArrayList<Card>();
-        this.initializeDeckFromFile(filepath);
-        this.shuffleDeck();
-        
+
+        if (filepath == null || filepath.isBlank()) {
+            throw new IllegalArgumentException("Deck file name must not be null/blank.");
+        }else{
+            this.initializeDeckFromFile(filepath);
+            this.shuffleDeck();
+        }        
+    }
+
+    // This is the constructur for when the deck is not used by the host
+    public Deck() {
+        this.deck = new ArrayList<Card>();
+        this.discardPile = new ArrayList<Card>();  
     }
 
     public void shuffleDeck() {
