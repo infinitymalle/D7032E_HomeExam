@@ -12,7 +12,7 @@ public class ClientHandler {
     private DataOutputStream out;
 
 
-    ClientHandler(Socket socket, int id){
+    public ClientHandler(Socket socket, int id){
         this.id = id;
         try {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));

@@ -13,7 +13,8 @@ public class LocalPlayer extends Player {
         super(playerID);
         this.keyboardInput = new BufferedReader(new InputStreamReader(System.in));
     }
-
+    
+    @Override
     public Card judge(ArrayList<Card> playedApples) {
         System.out.println(this.newroundString(true));
         while (true) {
@@ -50,7 +51,7 @@ public class LocalPlayer extends Player {
             System.out.println("You have to choose a valid option!");
         }
     }
-
+    @Override
     public void notifyWhoWon(int id, Card winningApple){
         if(this.playerID == id){
             System.out.println("Congratulations! \n\nYou won with the red apple:\n" + winningApple.getString() + "!\n");
