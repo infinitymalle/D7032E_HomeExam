@@ -1,6 +1,7 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,7 +12,6 @@ import networking.ServerNetworking;
 import player.*;
 
 public class HostGame {
-    private String[] gamePhase = new String[]{"DRAW_PHASE", "PLAY_PHASE", "JUDGE_PHASE", "CHECKWIN"};
 
     private String greenApplesFile = "greenApples.txt";
     private String redApplesFile = "redApples.txt";
@@ -20,7 +20,6 @@ public class HostGame {
     private Card currentGreenApple;
     private Card winningApple;
 
-    private int currentPhaseIndex = 0;
     private int judge;
 
     private ServerNetworking serverNetworkManager;
@@ -28,6 +27,9 @@ public class HostGame {
     private ArrayList<Card> playedApples = new ArrayList<Card>();
     private int pointsToWin;
     private int victoriousPlayer;
+    
+    private IGameState currentGameState;
+    private IGameNotifier notifier;
     
 
     public HostGame(int numberOfOnlinePlayers){
@@ -60,6 +62,27 @@ public class HostGame {
         startGame();
     }
 
+    public HostGame(List<Player> players, Deck redApples, Deck greenApples, IGameNotifier notifier, int pointsToWin) {
+        this.players = new ArrayList<>(players);
+        this.redApples = redApples;
+        this.greenApples = greenApples;
+        this.notifier = notifier;
+        this.pointsToWin = pointsToWin;
+        this.judge = 0;
+    }
+
+    public List<Player> getPlayers() { return players; }
+    public Deck getRedApples() { return redApples; }
+    public Deck getGreenApples() { return greenApples; }
+    public ArrayList<Card> getPlayedApples() { return playedApples; }
+    public int getJudge() { return judge; }
+    public void setJudge(int judge) { this.judge = judge; }
+    public int getPointsToWin() { return pointsToWin; }
+    public Card getCurrentGreenApple() { return currentGreenApple; }
+    public void setCurrentGreenApple(Card card) { this.currentGreenApple = card; }
+    public IGameNotifier getNotifier() { return notifier; }
+    public void setGameState(IGameState state) { this.currentGameState = state; }
+
     private void startGame(){
 
         while(nextPhase()){}
@@ -69,28 +92,11 @@ public class HostGame {
     }
 
     private Boolean nextPhase() {
-        // Perform actions based on the current phase
-        switch (gamePhase[currentPhaseIndex]) {
-            case "DRAW_PHASE":
-                DrawPhase();
-                break;
-            case "PLAY_PHASE":
-                PlayPhase();
-                break;
-            case "JUDGE_PHASE":
-                JudgePhase();
-                break;
-            case "CHECKWIN":
-                if(WinCheck()){
-                    return false;
-                }
-                judge = (judge + 1) % players.size(); // New judge
-                break;
+        if (currentGameState == null) {
+            return false;
         }
-
-        // Move to the next phase
-        currentPhaseIndex = (currentPhaseIndex + 1) % gamePhase.length;
-        return true;
+        currentGameState.handle(this);
+        return currentGameState != null;
     }
 
     private void DrawPhase() {
