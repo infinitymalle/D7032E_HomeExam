@@ -16,7 +16,7 @@ public class Deck {
         this.deck = new ArrayList<Card>();
         this.discardPile = new ArrayList<Card>();
 
-        if (filepath == null || filepath.isBlank()) {
+        if (filepath == null || filepath == "") {
             throw new IllegalArgumentException("Deck file name must not be null/blank.");
         }else{
             this.initializeDeckFromFile(filepath);
