@@ -20,6 +20,11 @@ public class ClientNetworking {
             this.socket.setSoTimeout(60_000);
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out = new DataOutputStream(socket.getOutputStream());
+
+        } catch (java.net.UnknownHostException e) {
+            throw new RuntimeException("ClientNetworking init failed: Unknown host " + ipAddress, e);
+        } catch (IOException e) {
+            throw new RuntimeException("ClientNetworking init failed due to I/O error for " + ipAddress, e);
         } catch (Exception e) {
             throw new RuntimeException("ClientNetworking init failed for ", e);
         }
