@@ -14,21 +14,11 @@ public class OnlinePlayer extends Player {
 
     @Override
     public Card judge(ArrayList<Card> playedApples){
-        throw new UnsupportedOperationException("This method might be implemented in the future.");
+        return null; // NetworkGameNotifier handles this externally.
     }
 
     @Override
     public Card playCard(Card playedApple){
-        throw new UnsupportedOperationException("This method might be implemented in the future.");
-    }
-
-    @Override
-    public void notifyWhoWon(int id, Card winningApple){
-        throw new UnsupportedOperationException("This method might be implemented in the future.");
-    }
-
-    @Override
-    public void gamefinished(int winningPlayer) {
-        throw new UnsupportedOperationException("Unimplemented method 'gamefinished'");
+        return null; // NetworkGameNotifier handles this externally.
     }
 }

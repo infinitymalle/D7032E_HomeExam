@@ -31,14 +31,14 @@ public class JoinGame {
         String payload = (serverMessage.length > 1) ? serverMessage[1] : "";
         switch (serverMessage[0]) {
             case "DRAW_PHASE":
-                DrawPhase(payload);
+                drawPhase(payload);
                 break;
             case "PLAY_PHASE":
-                PlayPhase(payload);
+                playPhase(payload);
                 break;
             case "JUDGE_PHASE":
                 System.out.println("Time to judge!");
-                JudgePhase(payload);
+                judgePhase(payload);
                 break;
             case "WINNER":
                 System.out.println(payload);;
@@ -57,25 +57,25 @@ public class JoinGame {
         return true;
     }
 
-    private void DrawPhase(String cardsDrawn) {
+    private void drawPhase(String cardsDrawn) {
         String[] cards = cardsDrawn.split("#");
 
         for(int i = 0; i < cards.length; i++){
             if (cards[i].isEmpty()) continue;
-            Card card = mockDeck.creatCard(cards[i]);
+            Card card = mockDeck.createCard(cards[i]);
             localPlayer.drawCard(card);
         }
     }
 
-    private void PlayPhase(String playedAppleString) {
-        Card GreenApple = mockDeck.creatCard(playedAppleString);
-        Card RedApple = localPlayer.playCard(GreenApple);
+    private void playPhase(String playedAppleString) {
+        Card greenApple = mockDeck.createCard(playedAppleString);
+        Card redApple = localPlayer.playCard(greenApple);
 
-        networkManager.sendMessage(RedApple.getString());
+        networkManager.sendMessage(redApple.getString());
         
     }
 
-    private void JudgePhase(String playedApplesString) {
+    private void judgePhase(String playedApplesString) {
         Card winningCard = localPlayer.judge(mockDeck.stringToCard(playedApplesString));
 
         networkManager.sendMessage(winningCard.getString());

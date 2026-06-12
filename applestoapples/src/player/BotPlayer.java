@@ -29,24 +29,4 @@ public class BotPlayer extends Player {
         this.setPlayedCard(this.hand.get(i));
         return this.getPlayedCard();
     }
-
-    @Override 
-    public void notifyWhoWon(int id, Card winningApple){
-        // bots doesn't need to change
-    }
-
-    public static int countHashes(String input) {
-        int count = 0;
-        for (int i = 0; i < input.length(); i++) {
-            if (input.charAt(i) == '#') {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    @Override
-    public void gamefinished(int winningPlayer) {
-        // Bots doesn't need to change
-    }
 }

@@ -54,7 +54,7 @@ public class Deck {
         this.discardPile.add(card);
     }
 
-    public Card creatCard(String cardString){
+    public Card createCard(String cardString){
         return new Card(cardString);
     }
 
@@ -63,7 +63,7 @@ public class Deck {
         ArrayList<Card> cardList = new ArrayList<Card>();
 
         for(int i = 0; i < cardStrings.length; i++){
-            Card card = creatCard(cardStrings[i]);
+            Card card = createCard(cardStrings[i]);
             cardList.add(card);
         }
         return cardList;

@@ -16,7 +16,7 @@ public class LocalPlayer extends Player {
     
     @Override
     public Card judge(ArrayList<Card> playedApples) {
-        System.out.println(this.newroundString(true));
+        System.out.println(this.newRoundString(true));
         while (true) {
             System.out.println("Choose which red apple wins:\n");
             for(Card card : playedApples){
@@ -27,14 +27,16 @@ public class LocalPlayer extends Player {
                 if (choice >= 1 && choice <= playedApples.size()) {
                     return playedApples.get(choice - 1);
                 }
-            } catch (Exception ignored) {} // TODO this is silent
+            } catch (Exception e) {
+                // Ignore parsing/IO errors and let the loop prompt again
+            } 
             System.out.println("You have to choose a valid option!");
         }
     }
 
     @Override
     public Card playCard(Card playedGreenApple) {
-        System.out.println(this.newroundString(false));
+        System.out.println(this.newRoundString(false));
         System.out.print(printHand());
         System.out.println("Green apple:\n" + playedGreenApple.getString() + "\n");
         System.out.println("Choose a red apple to play:");
@@ -47,21 +49,10 @@ public class LocalPlayer extends Player {
                     System.out.println("card that was played: \n" + this.playedCard.getString() + "\n");
                     return this.playedCard; 
                 }
-            } catch (Exception ignored) {} // TODO this is silent
+            } catch (Exception e) {
+                // Ignore parsing/IO errors and let the loop prompt again
+            } 
             System.out.println("You have to choose a valid option!");
         }
     }
-    @Override
-    public void notifyWhoWon(int id, Card winningApple){
-        if(this.playerID == id){
-            System.out.println("Congratulations! \n\nYou won with the red apple:\n" + winningApple.getString() + "!\n");
-        }else{
-            System.out.println("The winner is player: " + id + "\nWith the winning red apple: \n" + winningApple.getString() + "\n");
-        }
-    }
-
-    @Override
-    public void gamefinished(int winningPlayer) {
-        System.out.println("The player with player id " + winningPlayer + " won the game!\n\n Thank you for playing Apples to Apples!");
-    }    
 }

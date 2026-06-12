@@ -68,7 +68,11 @@ public class NetworkGameNotifier implements IGameNotifier {
             if (p.isOnline()) {
                 serverNetworkManager.sendMessage(p.getId(), "WINNER#" + "Player " + winnerId + " won the round with apple: " + winningApple.getString());
             } else if (!p.isBot()) {
-                p.notifyWhoWon(winnerId, winningApple);
+                if (p.getId() == winnerId) {
+                    System.out.println("Congratulations! \n\nYou won with the red apple:\n" + winningApple.getString() + "!\n");
+                } else {
+                    System.out.println("The winner is player: " + winnerId + "\nWith the winning red apple: \n" + winningApple.getString() + "\n");
+                }
             }
         }
     }
@@ -79,7 +83,7 @@ public class NetworkGameNotifier implements IGameNotifier {
             if (p.isOnline()) {
                 serverNetworkManager.sendMessage(p.getId(), "FINISHED#" + winningPlayerId);
             } else if (!p.isBot()) {
-                p.gamefinished(winningPlayerId);
+                System.out.println("The player with player id " + winningPlayerId + " won the game!\n\n Thank you for playing Apples to Apples!");
             }
         }
     }

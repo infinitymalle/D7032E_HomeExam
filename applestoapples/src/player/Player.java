@@ -21,10 +21,6 @@ public abstract class Player {
 
     abstract public Card playCard(Card playedApple);
 
-    abstract public void notifyWhoWon(int id, Card winningApple);
-
-    abstract public void gamefinished(int winningPlayer);
-
     public String printHand(){
         String returnString = "";
         for(int i = 0; i<hand.size(); i++){
@@ -33,7 +29,7 @@ public abstract class Player {
         return returnString;
     }
 
-    public String newroundString(boolean judge){
+    public String newRoundString(boolean judge){
         if(judge){
             return "*****************************************************\n\n**                 NEW ROUND - JUDGE               **\n\n*****************************************************";
 
