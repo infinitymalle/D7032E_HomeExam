@@ -21,7 +21,6 @@ public class PlayState implements IGameState {
         // 1. Draw the current green apple for the round
         Card currentGreenApple = context.getGreenApples().drawCard();
         context.setCurrentGreenApple(currentGreenApple);
-        context.getGreenApples().playedCard(currentGreenApple);
 
         List<Player> players = context.getPlayers();
         int judgeIndex = context.getJudge();
