@@ -71,12 +71,12 @@ public class Deck {
 
     private void initializeDeckFromFile(String fileName) {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("bin" ,"apples" , fileName), StandardCharsets.ISO_8859_1);
+            List<String> lines = Files.readAllLines(Paths.get("src" ,"apples" , fileName), StandardCharsets.ISO_8859_1);
             for (String line : lines) {
                 this.deck.add(new Card(line));
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to load cards from file: " + fileName + ". Ensure the file exists in bin/apples/.", e);
+            throw new IllegalStateException("Failed to load cards from file: " + fileName + ". Ensure the file exists in src/apples/.", e);
         }
     }
 }

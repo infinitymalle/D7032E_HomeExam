@@ -1,82 +1,53 @@
 package game.states;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import game.Card;
+import game.Deck;
 import game.HostGame;
-import game.IGameState;
+import game.IGameNotifier;
 import player.Player;
+import player.LocalPlayer;
 
-/**
- * PlayState handles the phase where players (excluding the judge) select a red apple
- * to match the current green apple.
- */
-public class PlayState implements IGameState {
+public class PlayStateTest {
 
-    @Override
-    public void handle(HostGame context) {
-        // 1. Draw the current green apple for the round
-        Card currentGreenApple = context.getGreenApples().drawCard();
-        context.setCurrentGreenApple(currentGreenApple);
-        context.getGreenApples().playedCard(currentGreenApple);
-
-        List<Player> players = context.getPlayers();
-        int judgeIndex = context.getJudge();
+    @Test
+    void testPlayPhase_Rules6to9() {
+        ArrayList<Player> players = new ArrayList<>();
+        Player p1 = new LocalPlayer(1);
+        Player p2 = new LocalPlayer(2); // This will be the judge
         
-        // 2. Setup ExecutorService and CountDownLatch for simultaneous player turns
-        ExecutorService threadpool = Executors.newFixedThreadPool(players.size() > 1 ? players.size() - 1 : 1);
-        CountDownLatch latch = new CountDownLatch(players.size() > 1 ? players.size() - 1 : 0); // excluding the judge
+        // Mock player 1 selecting a card immediately when their turn thread executes
+        p1.setPlayedCard(new Card("Red Apple 1"));
+        players.add(p1);
+        players.add(p2);
 
-        for (int i = 0; i < players.size(); i++) {
-            if (i == judgeIndex) {
-                continue;
-            }
-            
-            final Player currentPlayer = players.get(i);
-            
-            threadpool.execute(() -> {
-                try {
-                    // 3. Ask player for their card selection via the notifier
-                    if (context.getNotifier() != null) {
-                        context.getNotifier().askForCard(currentPlayer, currentGreenApple);
-                    }
-                    
-                    // 4. Record the played card in the context's list
-                    Card playedCard = currentPlayer.getPlayedCard();
-                    if (playedCard != null) {
-                        synchronized (context.getPlayedApples()) {
-                            context.getPlayedApples().add(playedCard);
-                        }
-                    }
-                } catch (Exception e) {
-                    System.out.println("Error during player card submission: " + e.getMessage());
-                } finally {
-                    latch.countDown();
-                }
-            });
-        }
-        
-        // 5. Wait for all non-judge players to submit their cards
-        threadpool.shutdown();
-        try {
-            if (!latch.await(60, TimeUnit.SECONDS)) {
-                System.out.println("Not all players responded in time.");
-                threadpool.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.out.println("Interrupted while waiting for players to play cards");
-        }
-        
-        // Transition to JudgeState
-        context.setGameState(new JudgeState()); 
+        Deck greenApples = new Deck();
+        greenApples.playedCard(new Card("Green Apple")); // Put one in discard pile so it can be drawn
+
+        MockNotifier notifier = new MockNotifier();
+        HostGame context = new HostGame(players, new Deck(), greenApples, notifier, 4);
+        context.setJudge(1); // Set p2 (index 1) as judge
+
+        PlayState playState = new PlayState();
+        playState.handle(context);
+
+        assertNotNull(context.getCurrentGreenApple(), "Rule 6: A green apple should be drawn.");
+        assertEquals(1, context.getPlayedApples().size(), "Rule 7 & 9: All non-judge players must play a card.");
+        assertTrue(notifier.askedForCard, "Notifier should have asked player 1 for a card.");
+        assertTrue(context.getCurrentGameState() instanceof JudgeState, "Game should transition to JudgeState.");
     }
 
-    @Override
-    public String getPhaseName() {
-        return "PLAY_PHASE";
+    static class MockNotifier implements IGameNotifier {
+        boolean askedForCard = false;
+        
+        @Override public void notifyDraw(Player p, List<Card> c) {}
+        @Override public void askForCard(Player p, Card green) { askedForCard = true; }
+        @Override public Card askToJudge(Player j, List<Card> played) { return null; }
+        @Override public void broadcastWinner(int id, Card c) {}
+        @Override public void notifyGameFinished(int id) {}
     }
 }

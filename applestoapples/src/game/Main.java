@@ -49,6 +49,8 @@ public class Main {
             String input = keyboardInput.readLine();
             int numberOfOnlinePlayers = Integer.parseInt(input);
             new HostGame(numberOfOnlinePlayers);
+            System.out.println("Thanks for playing!");
+            System.exit(0);
         } catch (IOException e) {
             System.out.println("Input error: " + e.getMessage());
         }
@@ -59,6 +61,8 @@ public class Main {
         try {
             String ipAddress = keyboardInput.readLine();
             new JoinGame(ipAddress);
+            System.out.println("Thanks for playing!");
+            System.exit(0);
         } catch (IOException e) {
             System.out.println("Input error: " + e.getMessage());
         }
