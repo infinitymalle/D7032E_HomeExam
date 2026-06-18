@@ -3,15 +3,16 @@ package game;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import player.Player;
+import player.LocalPlayer;
 import java.util.ArrayList;
 import java.util.List;
-import player.Player;
 import player.BotPlayer;
 
 public class HostGameTest {
 
     @Test
-    void testRandomJudge_Rule5() {
+    void testRule5_RandomizeStartingJudge() {
         // Rule 5: Randomise which player starts being the judge.
         Deck mockDeck = new Deck();
         List<Player> players = new ArrayList<>();
@@ -35,14 +36,13 @@ public class HostGameTest {
     }
 
     @Test
-    void testPointsToWin_Rule15() {
+    void testRule15_WinningConditions() {
         // Rule 15:
         // 4 players -> 8 points
         // 5 players -> 7 points
         // 6 players -> 6 points
         // 7 players -> 5 points
         // 8+ players -> 4 points
-        
         Deck mockDeck = new Deck();
 
         assertEquals(8, createGameWithNPlayers(4, mockDeck).getPointsToWin(), "4 players should require 8 points to win.");
