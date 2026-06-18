@@ -76,8 +76,7 @@ public class Deck {
                 this.deck.add(new Card(line));
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to load cards from file: " + e.getMessage());
+            throw new IllegalStateException("Failed to load cards from file: " + fileName + ". Ensure the file exists in bin/apples/.", e);
         }
     }
 }

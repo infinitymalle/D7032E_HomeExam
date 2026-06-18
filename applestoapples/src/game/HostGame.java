@@ -2,11 +2,7 @@ package game;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 import networking.NetworkGameNotifier;
 import networking.ServerNetworking;
@@ -57,7 +53,7 @@ public class HostGame {
             this.pointsToWin = 4;
         }
 
-        judge = java.util.concurrent.ThreadLocalRandom.current().nextInt(players.size());
+        judge = ThreadLocalRandom.current().nextInt(players.size());
         
         // Initialize notifier and initial state
         this.notifier = new NetworkGameNotifier(serverNetworkManager, players);
@@ -93,7 +89,7 @@ public class HostGame {
         while(nextPhase()){}
     }
 
-    private Boolean nextPhase() {
+    private boolean nextPhase() {
         if (currentGameState == null) {
             return false;
         }
@@ -101,11 +97,4 @@ public class HostGame {
         return currentGameState != null;
     }
 
-    private String playedRedApplesToString() {
-        String applesString = "";
-        for (int i = 0; i < playedApples.size(); i++) {
-            applesString += "#" + playedApples.get(i).getString();
-        }
-        return applesString;
-    }
 }
