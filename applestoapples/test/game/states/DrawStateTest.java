@@ -19,7 +19,6 @@ public class DrawStateTest {
 
     @Test
     void testDrawState() {
-        System.out.println("Running DrawStateTest...");
 
         // Setup mock environment
         ArrayList<Player> players = new ArrayList<>();
@@ -50,7 +49,6 @@ public class DrawStateTest {
         context.setGameState(drawState);
         
         // Execute handle
-        System.out.println("Executing DrawState.handle...");
         drawState.handle(context);
         
         // Use JUnit Assertions to verify the state

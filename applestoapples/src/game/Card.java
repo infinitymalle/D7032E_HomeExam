@@ -1,5 +1,8 @@
 package game;
 
+/**
+ * Represents a single playing card containing a text string.
+ */
 public class Card {
     private final String cardString; 
 

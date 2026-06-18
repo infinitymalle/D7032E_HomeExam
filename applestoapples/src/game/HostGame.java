@@ -9,6 +9,11 @@ import networking.ServerNetworking;
 import player.*;
 import game.states.DrawState;
 
+/**
+ * HostGame acts as the Context in the State Pattern architecture.
+ * It holds the current state of the game (Draw, Play, Judge, WinCheck),
+ * the players, the decks, and the communication strategy (IGameNotifier).
+ */
 public class HostGame {
 
     private String greenApplesFile = "greenApples.txt";

@@ -4,6 +4,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * Manages the socket connections for the host server.
+ * Responsible for accepting incoming client connections and broadcasting
+ * string messages across the network.
+ */
 public class ServerNetworking {
     private ServerSocket serverSocket;
     private ArrayList<ClientHandler> players = new ArrayList<>();

@@ -3,6 +3,11 @@ package game;
 import networking.ClientNetworking;
 import player.LocalPlayer;
 
+/**
+ * Manages the client-side game loop for an online player.
+ * Communicates with the HostGame server to receive phase instructions
+ * and submit played or judged cards over the network.
+ */
 public class JoinGame {
     private LocalPlayer localPlayer;
     private ClientNetworking networkManager;

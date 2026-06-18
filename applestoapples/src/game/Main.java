@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * The entry point for the Apples to Apples game.
+ * Handles the initial console menu for hosting or joining a network game.
+ */
 public class Main {
     public static void main(String[] args){
         System.out.println("Starting!");

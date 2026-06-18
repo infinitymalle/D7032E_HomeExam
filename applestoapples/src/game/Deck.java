@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-
+/**
+ * Represents a deck of cards (either Green or Red Apples).
+ * Handles drawing, shuffling, and recycling the discard pile when the deck is empty.
+ */
 public class Deck {
     private ArrayList<Card> deck;
     private ArrayList<Card> discardPile;

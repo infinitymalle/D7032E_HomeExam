@@ -6,8 +6,10 @@ import game.IGameNotifier;
 import player.Player;
 
 /**
- * NetworkGameNotifier implements IGameNotifier to handle communication 
- * with players over the network or locally.
+ * The concrete implementation of the IGameNotifier communication strategy.
+ * This class handles routing the game's requests to the appropriate player type
+ * (OnlinePlayer, LocalPlayer, or BotPlayer) without the core game logic needing
+ * to know how the communication happens.
  */
 public class NetworkGameNotifier implements IGameNotifier {
     private ServerNetworking serverNetworkManager;

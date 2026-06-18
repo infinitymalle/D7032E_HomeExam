@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-
+/**
+ * Manages the low-level TCP socket connection for a client joining a game.
+ * Responsible for listening to the server and sending the local player's
+ * actions back over the network.
+ */
 public class ClientNetworking {
 
     private Socket socket;
